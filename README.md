@@ -1,0 +1,1 @@
+# openai-sonarqube-action
