@@ -45,11 +45,11 @@ inputs:
   sources-dir:
     required: false
     default:
-    description: Sources directory, defaults to ${{ github.workspace }}
+    description: Sources directory, defaults to github.workspace
   output-dir:
     required: false
     default: 
-    description: Ouptput directory for resulting files, defaults to ${{ github.workspace }}
+    description: Ouptput directory for resulting files, defaults to sources-dir
 outputs:
   files-changed:
     description: The Number of files changed
