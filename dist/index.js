@@ -22548,7 +22548,8 @@ const run = async() => {
 
     // write results
     for (const i in fixes) {
-        await fileSystem.writeFile(config.outputDir, fixes[i]);
+        const { filename, content } = fixes[i];
+        await fileSystem.writeFile(filename, content );
     }
 
     //output number of files changed
