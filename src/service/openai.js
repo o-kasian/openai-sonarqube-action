@@ -43,7 +43,7 @@ const constructOpenAiClient = (config) => {
                 model: config.openAi.model,
                 messages: [
                     {role: "system", content: generateSystemMessage()},
-                    {role: "user", content: generatePrompt(content, issues)}
+                    {role: "user", content: prompt}
                 ]
             });
             const { choices = [] } = completion.data;
@@ -63,6 +63,8 @@ const constructOpenAiClient = (config) => {
             }
         } catch (error) {
             if (error.response) {
+                console.log("==== PROMPT ====");
+                console.log(prompt);
                 return {
                     filename,
                     success: false,
