@@ -2,11 +2,11 @@ const { Configuration, OpenAIApi } = require("openai");
 const fetch = require("node-fetch");
 const { rateLimiter } = require('../util/rateLimit');
 
-const wrap = async(text) => {
+const wrap = (text) => {
     return "```\n" + text + "\n```";
 }
 
-const unwrap = async(text) => {
+const unwrap = (text) => {
     return text.trim()
                 .replace(/^```/g, '')
       			.replace(/```$/g, '');

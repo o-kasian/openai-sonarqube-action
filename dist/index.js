@@ -13773,11 +13773,11 @@ const { Configuration, OpenAIApi } = __nccwpck_require__(9211);
 const fetch = __nccwpck_require__(467);
 const { rateLimiter } = __nccwpck_require__(7151);
 
-const wrap = async(text) => {
+const wrap = (text) => {
     return "```\n" + text + "\n```";
 }
 
-const unwrap = async(text) => {
+const unwrap = (text) => {
     return text.trim()
                 .replace(/^```/g, '')
       			.replace(/```$/g, '');
