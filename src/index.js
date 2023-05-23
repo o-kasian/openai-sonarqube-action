@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const config = require("./config");
-const constructSonarQubeService = require("./service/sonar");
+const constructSonarQubeService = require("./service/sonarqube");
 const constructOpenAiService = require("./service/openai");
-const constructFilesystemService = require("./service/openai");
+const constructFilesystemService = require("./service/filesystem");
 const core = require('@actions/core');
 
 const sonar = constructSonarQubeService(config);

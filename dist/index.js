@@ -13735,6 +13735,37 @@ module.exports = config;
 
 /***/ }),
 
+/***/ 8158:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const fs = __nccwpck_require__(7147);
+const path = __nccwpck_require__(1017);
+
+const constructFilesystemService = (config) => {
+
+    const loadFile = async(filename) => {
+        const filePath = path.join(config.sourcesDir, filename);
+        const data = await fs.promises.readFile(filePath);
+        return data.toString('utf-8');
+    }
+    
+    const writeFile = async(filename, content) => {
+        const filePath = path.join(config.outputDir, filename);
+        const fileDir = path.dirname(filePath);
+        fs.mkdirSync(fileDir, { recursive: true });
+        await fs.promises.writeFile(filePath, content, 'utf-8');
+    }
+
+    return {
+        loadFile,
+        writeFile
+    };
+};
+
+module.exports = constructFilesystemService;
+
+/***/ }),
+
 /***/ 2806:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -13823,6 +13854,70 @@ module.exports = constructOpenAiClient;
 
 /***/ }),
 
+/***/ 6194:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const { posix } = __nccwpck_require__(1017);
+const { stringify } = __nccwpck_require__(9630);
+const fetch = __nccwpck_require__(467);
+
+const constructSonarQubeClient = (config) => {
+    const baseUrl = new URL(config.sonar.url).origin;
+    const basePath = new URL(config.sonar.url).pathname;
+    const endpoint = (path) => new URL(posix.join(basePath, path), baseUrl).href;
+    const headers = {
+        'Authorization': Buffer.from(`${config.sonar.token}:`).toString('base64'),
+        'Accept': 'application/json'
+    };
+    const baseParams = {
+        ...config.sonar.query,
+        componentKeys: config.sonar.projectKey,
+        branch: config.sonar.branch,
+        ps: 15
+    };
+
+    const filterResult = (result) => {
+        return result;
+    };
+
+    const fetchIssues = async() => {
+        const result = [];
+
+        let page = 1;
+        while(true) {
+            const params = {
+                ...baseParams,
+                p: page
+            };
+            const url = `${endpoint('issues/search')}?${stringify(params)}`;
+            const response = await fetch(url, {
+                method: 'GET',
+                headers
+            });
+
+            if (response.status !== 200) {
+                const reason = await response.text();
+                throw new Error(reason);
+            }
+            const data = await response.json();
+            result.push(...(data.issues || []));
+            if (pageSize * page >= data.paging.total) {
+                return filterResult(result);
+            }
+
+            page++;
+        }
+    }
+
+    return {
+        fetchIssues
+    };
+}
+
+module.exports = constructSonarQubeClient;
+
+/***/ }),
+
 /***/ 7151:
 /***/ ((module) => {
 
@@ -13863,14 +13958,6 @@ module.exports = {
     delay,
     rateLimiter
 };
-
-/***/ }),
-
-/***/ 9647:
-/***/ ((module) => {
-
-module.exports = eval("require")("./service/sonar");
-
 
 /***/ }),
 
@@ -13943,6 +14030,14 @@ module.exports = require("https");
 
 "use strict";
 module.exports = require("net");
+
+/***/ }),
+
+/***/ 9630:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:querystring");
 
 /***/ }),
 
@@ -22408,9 +22503,9 @@ var __webpack_exports__ = {};
 const fs = __nccwpck_require__(7147);
 const path = __nccwpck_require__(1017);
 const config = __nccwpck_require__(4570);
-const constructSonarQubeService = __nccwpck_require__(9647);
+const constructSonarQubeService = __nccwpck_require__(6194);
 const constructOpenAiService = __nccwpck_require__(2806);
-const constructFilesystemService = __nccwpck_require__(2806);
+const constructFilesystemService = __nccwpck_require__(8158);
 const core = __nccwpck_require__(2186);
 
 const sonar = constructSonarQubeService(config);
