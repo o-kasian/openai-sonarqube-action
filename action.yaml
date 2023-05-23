@@ -1,0 +1,58 @@
+name: GitHub Script
+author: GitHub
+description: Run OpenAI GPT model to fix sonarqube findings
+inputs:
+  sonar-token:
+    required: true
+    description: SonarQube token to fetch infromation
+  sonar-project-key:
+    required: true
+    default:
+    description: Prject key in sonarqube, if not specified explicitly will look for sonar-project.properties, or use ${owner}_${repo} if not found
+  sonar-branch:
+    required: false
+    default:
+    description: Branch name in sonarqube to fetch information from, by default will use current branch
+  sonar-url:
+    required: false
+    default: https://sonarcloud.io/api/
+    description: API url of sonarqube instance, by default Sonar Cloud
+  sonar-query:
+    required: false
+    default:
+    description: Yaml containing additional parameters supported by api/issues/search https://next.sonarqube.com/sonarqube/web_api/api/issues/search
+  sonar-exclude-files:
+    required: false
+    default: 
+    description: Coma-separated list of GLOB patterns for sources to be excluded from autofix
+  sonar-exclude-rules:
+    required: false
+    default: 
+    description: Coma-separated list of SonarQube rules to include
+  openai-token:
+    required: true
+    description: OpenAI token to use for API calls
+  openai-rate-limit:
+    required: false
+    default: 3
+    description: OpenAI API rate limit per minute
+  openai-url:
+    required: false
+    default: https://api.openai.com/v1
+  openai-model:
+    required: false
+    default: gpt-3.5-turbo
+  sources-dir:
+    required: false
+    default:
+    description: Sources directory, defaults to ${{ github.workspace }}
+  output-dir:
+    required: false
+    default: 
+    description: Ouptput directory for resulting files, defaults to ${{ github.workspace }}
+outputs:
+  files-changed:
+    description: The Number of files changed
+runs:
+  using: node16
+  main: dist/index.js
