@@ -13869,11 +13869,12 @@ const constructSonarQubeClient = (config) => {
         'Authorization': Buffer.from(`${config.sonar.token}:`).toString('base64'),
         'Accept': 'application/json'
     };
+    const pageSize = 15;
     const baseParams = {
         ...config.sonar.query,
         componentKeys: config.sonar.projectKey,
         branch: config.sonar.branch,
-        ps: 15
+        ps: pageSize
     };
 
     const filterResult = (result) => {
