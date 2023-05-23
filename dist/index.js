@@ -13677,6 +13677,7 @@ module.exports.implForWrapper = function (wrapper) {
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const { parse } = __nccwpck_require__(4083);
+const fs = __nccwpck_require__(7147);
 const core = __nccwpck_require__(2186);
 
 const sonarConfig = {
@@ -13692,6 +13693,25 @@ sonarConfig.branch = sonarConfig.branch || process.env.GITHUB_REF_NAME;
 sonarConfig.query = (sonarConfig.query && parse(sonarConfig.query)) || {};
 sonarConfig.excludeFiles = (sonarConfig.excludeFiles || '').split(',').map(str => str.trim()).filter(str => !!str);
 sonarConfig.excludeRules = (sonarConfig.excludeRules || '').split(',').map(str => str.trim()).filter(str => !!str);
+
+// parse sonar-project.properties
+if (!sonarConfig.projectKey && fs.existsSync('sonar-project.properties')) {
+    const data = fs.readFileSync('sonar-project.properties');
+    const contents = data.toString('utf-8');
+    const props = contents.split('\n')
+        .map(str => str.trim())
+        .filter(str => !!str)
+        .filter(str => !str.startsWith("#"))
+        .map(str => str.split('=', 2))
+        .filter(arr => arr.length == 2)
+        .reduce((prev, [name, value]) => ({...prev, [name]: value}), {});
+    sonarConfig.projectKey = props['sonar.projectKey'];
+}
+
+// if no sonarConfig.projectKey, take it as owner_repo
+if (!sonarConfig.projectKey) {
+    sonarConfig.projectKey = `${process.env.GITHUB_REPOSITORY_OWNER}_${process.env.GITHUB_REPOSITORY}`;
+}
 
 const openAiConfig = {
     token: core.getInput('openai-token'),
