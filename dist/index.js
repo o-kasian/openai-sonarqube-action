@@ -13779,7 +13779,8 @@ const unwrap = (text) => {
     return text.trim()
                 .replace(/^```/g, '')
       			.replace(/```$/g, '')
-                .replace(/```(.*)/g, '');
+                .replace(/```(.*)/g, '')
+                .trim();
 }
 
 const generateSystemMessage = () => {
