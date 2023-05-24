@@ -51,6 +51,4 @@ const config = {
 config.sourcesDir = config.sourcesDir || process.env.GITHUB_WORKSPACE;
 config.outputDir = config.outputDir || config.sourcesDir;
 
-console.log(JSON.stringify(config));
-
 module.exports = config;

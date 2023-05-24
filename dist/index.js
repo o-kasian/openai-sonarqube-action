@@ -13729,8 +13729,6 @@ const config = {
 config.sourcesDir = config.sourcesDir || process.env.GITHUB_WORKSPACE;
 config.outputDir = config.outputDir || config.sourcesDir;
 
-console.log(JSON.stringify(config));
-
 module.exports = config;
 
 /***/ }),
@@ -13780,7 +13778,8 @@ const wrap = (text) => {
 const unwrap = (text) => {
     return text.trim()
                 .replace(/^```/g, '')
-      			.replace(/```$/g, '');
+      			.replace(/```$/g, '')
+                .replace(/```(.*)/g, '');
 }
 
 const generateSystemMessage = () => {
@@ -13794,7 +13793,7 @@ const generatePrompt = (content, issues) => {
         wrap(issuesText),
         "### Code with issues:",
         wrap(content),
-        "### Your task - Provide fixed code, no line numbers, no additional comments"
+        "### Your task - Provide fixed code, no line numbers, no additional comments, no notes"
     ];
     return lines.join("\n").trim();
 }
@@ -13834,8 +13833,6 @@ const constructOpenAiClient = (config) => {
             }
         } catch (error) {
             if (error.response) {
-                console.log("==== PROMPT ====");
-                console.log(prompt);
                 return {
                     filename,
                     success: false,
