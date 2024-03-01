@@ -8,9 +8,9 @@ const wrap = (text) => {
 
 const unwrap = (text) => {
     return text.trim()
+                .replace(/```(.*)/g, '')
                 .replace(/^```/g, '')
       			.replace(/```$/g, '')
-                .replace(/```(.*)/g, '')
                 .trim();
 }
 
@@ -25,7 +25,7 @@ const generatePrompt = (content, issues) => {
         wrap(issuesText),
         "### Code with issues:",
         wrap(content),
-        "### Your task - Provide fixed code, no line numbers, no additional comments, no notes"
+        "### Your task - Provide fixed code, no line numbers, no additional comments, no notes. Answer MUST contain only code for single file wrapped in markdown quotes."
     ];
     return lines.join("\n").trim();
 }

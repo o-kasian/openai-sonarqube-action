@@ -44,7 +44,7 @@ const run = async() => {
     // write results
     for (const i in fixes) {
         const { filename, content } = fixes[i];
-        await fileSystem.writeFile(filename, content );
+        await fileSystem.writeFile(filename, content);
     }
 
     //output number of files changed
